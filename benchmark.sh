@@ -1,35 +1,43 @@
 #!/bin/bash
-# Runs the function `<function>` for the groups $1 .. $2 in the list `group`,
-# where `group` is loaded from the given workspace <workspace>
+# In the workspace <workspace> a variable `groups` must be defined.
+# Starts GAP sessions for each group in `groups{[$1 .. $2]}` which do:
+# - Read the file <file-to-read>.
+# - Measure time of the function call <function> on the current group.
+# - Collect the result in a csv file.
+# If a GAP session does not finish in a certain time window, its process
+# is killed and the script continues with the next group.
 GAP="/home/sergio/projects/gap-master/bin/gap.sh"
 #GAP="/opt/gap/current/bin/gap.sh"
-if [ $# != 2 -a $# != 4 ]; then
-    echo "usage: benchmark.sh [<from> <till>] <function> <workspace>"
+if [ $# != 3 -a $# != 5 ]; then
+    echo -n "usage: benchmark.sh [<from> <till>] <function> <file-to-read>"
+    echo " <workspace>"
     exit 1
 fi
-if [ $# == 2 ]; then
+if [ $# == 3 ]; then
     function=$1
-    workspace=$2
+    to_read=$2
+    workspace=$3
     I=1
     J=$(echo "Length(groups);" | ${GAP} -q -L ${workspace})
     # gap introduces a carriage return character \r when working with pipes
     J=${J//$'\r'}
 fi
-if [ $# == 4 ]; then
+if [ $# == 5 ]; then
     I=$1
     J=$2
     function=$3
-    workspace=$4
+    to_read=$4
+    workspace=$5
 fi
-folder="data"
-filename="${function}_${workspace}_${I}_${J}"
+folder="data/results"
+filename="${function}_${workspace//$'.gapws'}_${I}_${J}.csv"
 echo "i, Degree, ONanScottType, Socle, Finished, Mean, Median" \
     > ${folder}/${filename}
 echo "$((I - 1)),0" > "${folder}/${filename}_tracking"
 for (( ; J - I + 1 ; I++ )) ; do
     echo ${I}
     nohup ${GAP} -q -L ${workspace} \
-        ../../utils.g benchmark.g nonbasic.g product-action.g \
+        ../../utils.g benchmark.g  \
         &> 'nohup.out' \
         <<- EOF &
     ChangeDirectoryCurrent("./${folder}");;
