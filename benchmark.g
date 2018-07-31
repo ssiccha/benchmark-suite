@@ -70,9 +70,17 @@ prepareInfo := function( G, i, status, stats )
     return line;
 end;
 
-BenchmarkCallForGroups := function(filename, func, groups)
-    local file, tracking, str, i, status, G, degree, onan, soc, line,
+BenchmarkCallForGroups := function(filename, func, groups, options...)
+    local nrRuns, file, tracking, str, i, status, G, degree, onan, soc, line,
     t, benchmarkData, stats, mean, median, timeSingleRun;
+    if not IsEmpty(options) then
+        options := options[1];
+        if IsBound(options.nrRuns) then
+            nrRuns := options.nrRuns;
+        else
+            nrRuns := 30;
+        fi;
+    fi;
     file := OutputTextFile(filename, true);
     tracking := InputTextFile(Concatenation(filename, "_tracking"));
 
@@ -108,7 +116,7 @@ BenchmarkCallForGroups := function(filename, func, groups)
     PrintTo(tracking, Concatenation(String(i), ",1,", String(t)));
 
     ## Perform the proper benchmark
-    benchmarkData := Benchmark(func, [G], rec(warmup := 0, times := 30));
+    benchmarkData := Benchmark(func, [G], rec(warmup := 0, times := nrRuns));
 
     ## Write info to file
     # Create lock so we don't get killed while finishing up
