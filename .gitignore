@@ -1,0 +1,6 @@
+data/
+inputlog
+nohup.out
+*.gapws
+test
+test_tracking
