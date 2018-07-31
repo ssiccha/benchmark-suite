@@ -37,7 +37,7 @@ echo "$((I - 1)),0" > "${folder}/${filename}_tracking"
 for (( ; J - I + 1 ; I++ )) ; do
     echo ${I}
     nohup ${GAP} -q -L ${workspace} \
-        ../../utils.g benchmark.g  \
+        read.g ${to_read}  \
         &> 'nohup.out' \
         <<- EOF &
     ChangeDirectoryCurrent("./${folder}");;
