@@ -54,7 +54,11 @@ prepareInfo := function( G, i, status, stats )
     local degree, onan, soc, mean, median, line;
     degree := NrMovedPoints(G);
     onan := ONanScottType(G);
-    soc := StructureDescription(Socle(G));
+    if IsAbelian(Socle(G)) then
+        soc := STRINGIFY(Order(Socle(G).1), " ^ x");
+    else
+        soc := StructureDescription(Socle(G));
+    fi;
     soc := Concatenation("\"", soc, "\"");
     if status = 0 then
         mean := threeSignificantDigits(stats[3]);
@@ -118,7 +122,8 @@ BenchmarkCallForGroups := function(filename, func, groups, options...)
     PrintTo(tracking, Concatenation(String(i), ",1,", String(t)));
 
     ## Perform the proper benchmark
-    benchmarkData := Benchmark(func, [G], rec(warmup := 0, times := nrRuns));
+    # FIXME: make nrRuns an argument:
+    benchmarkData := Benchmark(func, [G], rec(warmup := 0, times := 5));
 
     ## Write info to file
     # Create lock so we don't get killed while finishing up
