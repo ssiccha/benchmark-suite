@@ -107,9 +107,11 @@ BenchmarkCallForGroups := function(filename, func, groups, options...)
     tracking := Concatenation(filename, "_tracking");
     i := i+1;
     G := groups[i];
+    G := Group(GeneratorsOfGroup(G));
     PrintTo(tracking, Concatenation(String(i), ",2,NA"));
 
-    t := GET_REAL_TIME_OF_FUNCTION_CALL(func, [G]);
+    res := GET_REAL_TIME_OF_FUNCTION_CALL(func, [G]);
+    t := res.t;
     t := Round(t / 1000.);
 
     ## Write to tracking file: one calculation finished for group i
