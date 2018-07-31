@@ -72,7 +72,7 @@ end;
 
 BenchmarkCallForGroups := function(filename, func, groups, options...)
     local nrRuns, file, tracking, str, i, status, G, degree, onan, soc, line,
-    t, benchmarkData, stats, mean, median, timeSingleRun;
+    res, t, benchmarkData, stats, mean, median, timeSingleRun;
     if not IsEmpty(options) then
         options := options[1];
         if IsBound(options.nrRuns) then
@@ -111,7 +111,7 @@ BenchmarkCallForGroups := function(filename, func, groups, options...)
     PrintTo(tracking, Concatenation(String(i), ",2,NA"));
 
     res := GET_REAL_TIME_OF_FUNCTION_CALL(func, [G]);
-    t := res.t;
+    t := res.time;
     t := Round(t / 1000.);
 
     ## Write to tracking file: one calculation finished for group i

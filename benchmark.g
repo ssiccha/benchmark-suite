@@ -16,11 +16,7 @@ GET_REAL_TIME_OF_FUNCTION_CALL := function ( method, args, options... )
   firstSeconds := first_time.tv_sec;
   firstMicroSeconds := first_time.tv_usec;
 
-  if options.passResult then
-    result := CallFuncList( method, args );
-  else
-    CallFuncList( method, args );
-  fi;
+  result := CallFuncList( method, args );
 
   second_time := IO_gettimeofday(  );
   secondSeconds := second_time.tv_sec;
@@ -29,11 +25,7 @@ GET_REAL_TIME_OF_FUNCTION_CALL := function ( method, args, options... )
   seconds := (secondSeconds - firstSeconds);
   microSeconds := secondMicroSeconds - firstMicroSeconds;
   total := seconds * 10^6 + microSeconds;
-  if options.passResult then
-    return rec( result := result, time := total );
-  else
-    return total;
-  fi;
+  return rec( result := result, time := total );
 end;
 
 alignRight := function( obj, n )
@@ -157,8 +149,7 @@ Benchmark := function( func, args, opt... )
   fi;
   for i in [ 1 .. opt.times ] do
     res := GET_REAL_TIME_OF_FUNCTION_CALL( func, args );
-    t := res.t;
-    res := res.res;
+    t := res.time;
     # We don't care about microseconds
     t := Floor( 1.0 * t / 1000 );
     timings[ Length(timings)+1 ] := t;
@@ -167,9 +158,6 @@ Benchmark := function( func, args, opt... )
   statistics := GetStatistics( timings );
 
   res := rec( timings := timings, statistics := statistics );
-  if opt.withResult then
-    res.res := CallFuncList( func, args );
-  fi;
   return res;
 end;
 
