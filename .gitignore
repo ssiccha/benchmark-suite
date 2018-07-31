@@ -1,4 +1,5 @@
-data/
+data/results/
+data/workspaces/
 inputlog
 nohup.out
 *.gapws
