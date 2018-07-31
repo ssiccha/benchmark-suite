@@ -34,10 +34,7 @@ for (( ; J - I + 1 ; I++ )) ; do
         <<- EOF &
     ChangeDirectoryCurrent("./${folder}");;
     ChangeDirectoryCurrent("./");;
-    forget := x -> Group(GeneratorsOfGroup(x));;
-    norm := x -> Normalizer(SymmetricParentGroup(x), x);;
-    funcWithForget := x -> ${function}(forget(x));;
-    BenchmarkCallForGroups("${filename}", funcWithForget, groups);
+    BenchmarkCallForGroups("${filename}", ${function}, groups);
 EOF
     pid=$!
     sleep 1
@@ -48,7 +45,7 @@ EOF
         continue 1
     fi
     sleep 4
-    for (( i=0 ; 30 - i ; i++ )) ; do
+    for (( i=0 ; 5 - i ; i++ )) ; do
         # If computations finished continue with the next group
         ps -p ${pid} > /dev/null
         if [ $? != 0 ]; then
@@ -56,8 +53,9 @@ EOF
         fi
         sleep 10
     done
+    # FIXME: make the maximum time per run a variable.
     # If the script reaches this place the computation did not finish
-    # after roughly 5 minutes
+    # after roughly 1 minute.
     while [ -e "${folder}/__lock_${filename}" ]; do
         sleep 1
     done
