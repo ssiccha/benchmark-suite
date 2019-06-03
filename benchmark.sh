@@ -30,13 +30,15 @@ if [ $# == 5 ]; then
     workspace=$5
 fi
 folder="data/results"
-filename="${function}_${workspace//$'.gapws'}_${I}_${J}.csv"
+filename="${function}_$(basename ${workspace} .gapws)_${I}_${J}.csv"
 echo "i, Degree, ONanScottType, Socle, Finished, Mean, Median" \
     > ${folder}/${filename}
 echo "$((I - 1)),0" > "${folder}/${filename}_tracking"
+echo "Tracking progress in"
+echo "${folder}/${filename}_tracking"
 for (( ; J - I + 1 ; I++ )) ; do
     echo ${I}
-    nohup ${GAP} -q -L ${workspace} \
+    nohup ${GAP} --quitonbreak --alwaystrace -q -L ${workspace} \
         read.g ${to_read}  \
         &> 'nohup.out' \
         <<- EOF &

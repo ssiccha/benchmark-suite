@@ -123,7 +123,7 @@ BenchmarkCallForGroups := function(filename, func, groups, options...)
 
     ## Perform the proper benchmark
     # FIXME: make nrRuns an argument:
-    benchmarkData := Benchmark(func, [G], rec(warmup := 0, times := 5));
+    benchmarkData := Benchmark(func, [G], rec(warmup := 0, times := 3));
 
     ## Write info to file
     # Create lock so we don't get killed while finishing up
